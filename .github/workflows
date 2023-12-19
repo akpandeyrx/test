@@ -1,0 +1,37 @@
+name: "Kotlin Lint Check"
+
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  kotlin-lint:
+    name: kotlin-lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: ktlint Github-Check
+        if: ${{ (github.head_ref == 'master') ||  (github.head_ref == 'main') || (github.head_ref == 'develop') || startsWith(github.head_ref, 'release') }}
+        uses: ScaCap/action-ktlint@v1.7
+        with:
+          github_token: ${{ secrets.github_token }}
+          android: true
+          reporter: github-check
+          filter_mode: file
+          fail_on_error: true
+
+      - name: ktlint PR-review
+        if:
+          ((github.base_ref == 'master' || github.base_ref == 'main' || github.base_ref == 'develop' || startsWith(github.base_ref, 'release')) &&
+          (github.head_ref != 'master'))
+        uses: ScaCap/action-ktlint@v1.7
+        with:
+          github_token: ${{ secrets.github_token }}
+          android: true
+          reporter: github-pr-review
+          filter_mode: file
+          fail_on_error: true
+OLP-880 #comment #time1d Bug fix in Add edit appointment. · amalgam-rx/olympia_android@763561c
